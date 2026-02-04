@@ -1,4 +1,4 @@
-package com.eerdem07.mira.mira_gateway;
+package com.eerdem07.mira.gateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

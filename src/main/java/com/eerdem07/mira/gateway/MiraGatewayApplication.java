@@ -1,4 +1,4 @@
-package com.eerdem07.mira.mira_gateway;
+package com.eerdem07.mira.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
