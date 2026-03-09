@@ -1,7 +1,6 @@
 package com.eerdem07.mira.gateway.merchants.domain;
 
 import com.eerdem07.mira.gateway.shared.domain.EmailValidator;
-import com.eerdem07.mira.gateway.shared.exception.InvalidEmailException;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -41,7 +40,7 @@ public class Merchant {
 
     public static Merchant register(UUID merchantId, String email, String passwordHash, String legalName, Instant now) {
         if (!EmailValidator.isValid(email)) {
-            throw new InvalidEmailException("Invalid email format");
+//            throw new InvalidEmailException("Invalid email format");
         }
 
         return new Merchant(merchantId, email.trim()

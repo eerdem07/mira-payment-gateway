@@ -6,6 +6,6 @@ import java.util.UUID;
 
 public final class MerchantNotFoundException extends ApplicationException {
     public MerchantNotFoundException(UUID merchantId) {
-        super("404", "MERCHANT_NOT_FOUND");
+        super(ErrorType.NOT_FOUND, "MERCHANT_NOT_FOUND", "Merchant not found with id: " + merchantId);
     }
 }
