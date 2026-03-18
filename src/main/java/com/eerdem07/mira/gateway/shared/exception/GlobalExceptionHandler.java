@@ -1,7 +1,5 @@
-package com.eerdem07.mira.gateway.shared.web;
+package com.eerdem07.mira.gateway.shared.exception;
 
-import com.eerdem07.mira.gateway.shared.exception.ApplicationException;
-import com.eerdem07.mira.gateway.shared.exception.DomainException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
