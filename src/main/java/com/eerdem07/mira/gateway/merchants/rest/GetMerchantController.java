@@ -28,5 +28,4 @@ public class GetMerchantController {
         return ResponseEntity.ok(response);
     }
 
-
 }

@@ -1,12 +1,15 @@
 package com.eerdem07.mira.gateway.auth.application;
 
 import com.eerdem07.mira.gateway.auth.application.exception.InvalidCredentialsException;
+import com.eerdem07.mira.gateway.auth.application.port.in.GenerateAccessTokenCommand;
 import com.eerdem07.mira.gateway.auth.application.port.in.LoginCommand;
 import com.eerdem07.mira.gateway.auth.application.port.in.LoginResult;
 import com.eerdem07.mira.gateway.auth.application.port.in.LoginUseCase;
 import com.eerdem07.mira.gateway.auth.application.port.out.MerchantAuthPort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class LoginService implements LoginUseCase {
@@ -29,8 +32,9 @@ public class LoginService implements LoginUseCase {
             throw new InvalidCredentialsException();
         }
 
-        String accessToken = jwtTokenProvider.generateToken(merchant.getMerchantId()
-                .toString());
+        UUID merchantId = merchant.getMerchantId();
+
+        String accessToken = jwtTokenProvider.generateToken(new GenerateAccessTokenCommand(merchantId));
 
         System.out.println(accessToken);
         return new LoginResult(accessToken);

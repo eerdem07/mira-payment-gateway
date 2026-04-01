@@ -7,13 +7,13 @@ public class ApiCredential {
     private final UUID credentialId;
     private final UUID merchantId;
     private ApiCredentialEnvironment apiCredentialEnvironment;
-    private String keyId;
-    private String secretHash;
-    private String secretPrefix;
+    private final String keyId;
+    private final String secretHash;
+    private final String secretPrefix;
     private ApiCredentialStatus apiCredentialStatus;
-    private Instant createdAt;
-    private Instant revokedAt;
+    private final Instant createdAt;
     private Instant lastUsedAt;
+    private Instant revokedAt;
 
     private ApiCredential(UUID credentialId,
                           UUID merchantId,
@@ -39,8 +39,26 @@ public class ApiCredential {
 
     }
 
-    public static ApiCredential create(UUID merchantId, ApiCredentialEnvironment apiCredentialEnvironment, String keyId, String secretHash, String secretPrefix) {
-        return new ApiCredential(UUID.randomUUID(), merchantId, apiCredentialEnvironment, null, null, null, null, Instant.now(), Instant.now(), null);
-
+    public static ApiCredential create(
+            UUID credentialId,
+            UUID merchantId,
+            ApiCredentialEnvironment environment,
+            String keyId,
+            String secretHash,
+            String secretPrefix,
+            Instant createdAt
+    ) {
+        return new ApiCredential(
+                credentialId,
+                merchantId,
+                environment,
+                keyId,
+                secretHash,
+                secretPrefix,
+                ApiCredentialStatus.ACTIVE,
+                createdAt,
+                null,
+                null
+        );
     }
 }
