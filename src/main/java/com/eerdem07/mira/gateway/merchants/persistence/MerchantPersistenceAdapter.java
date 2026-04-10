@@ -13,9 +13,9 @@ import java.util.UUID;
 
 @Repository
 public class MerchantPersistenceAdapter implements MerchantRepositoryPort, MerchantAuthPort {
-    private final SpringDataMerchantRepository repository;
+    private final MerchantJpaRepository repository;
 
-    public MerchantPersistenceAdapter(SpringDataMerchantRepository repository) {
+    public MerchantPersistenceAdapter(MerchantJpaRepository repository) {
         this.repository = repository;
     }
 

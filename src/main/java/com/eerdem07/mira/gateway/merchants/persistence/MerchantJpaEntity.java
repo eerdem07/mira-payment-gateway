@@ -1,5 +1,6 @@
 package com.eerdem07.mira.gateway.merchants.persistence;
 
+import com.eerdem07.mira.gateway.merchants.domain.MerchantStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -33,7 +34,7 @@ public class MerchantJpaEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 30)
-    private MerchantStatusJpa status;
+    private MerchantStatus status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -49,7 +50,7 @@ public class MerchantJpaEntity {
             String email,
             String passwordHash,
             String legalName,
-            MerchantStatusJpa status,
+            MerchantStatus status,
             Instant createdAt,
             Instant activatedAt,
             Instant suspendedAt
@@ -65,21 +66,3 @@ public class MerchantJpaEntity {
     }
 
 }
-
-
-//
-//    public void setLegalName(String legalName) {
-//        this.legalName = legalName;
-//    }
-//
-//    public void setStatus(MerchantStatusJpa status) {
-//        this.status = status;
-//    }
-//
-//    public void setActivatedAt(Instant activatedAt) {
-//        this.activatedAt = activatedAt;
-//    }
-//
-//    public void setSuspendedAt(Instant suspendedAt) {
-//        this.suspendedAt = suspendedAt;
-//    }

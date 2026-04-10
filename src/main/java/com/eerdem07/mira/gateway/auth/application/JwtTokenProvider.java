@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.UUID;
 
 @Service
 public class JwtTokenProvider {
@@ -27,18 +28,24 @@ public class JwtTokenProvider {
         this.jwtEncoder = jwtEncoder;
     }
 
-    public String generateToken(GenerateAccessTokenCommand body) {
+    public String generateToken(GenerateAccessTokenCommand command) {
         Instant now = Instant.now();
 
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256)
                 .build();
 
-        JwtClaimsSet claims = JwtClaimsSet. builder()
-                .subject(body.merchantId().toString())
-                .issuedAt(Instant.now())
-                .expiresAt(Instant.now()
-                        .plusSeconds(60 * 60))
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer(issuer)
+                .subject(command.merchantId()
+                        .toString())
+                .issuedAt(now)
+                .expiresAt(now.plus(accessTokenMinutes))
+                .id(UUID.randomUUID()
+                        .toString())
+                .claim("merchant_id", command.merchantId()
+                        .toString())
                 .build();
+
 
         return jwtEncoder.encode(JwtEncoderParameters.from(header, claims))
                 .getTokenValue();

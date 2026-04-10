@@ -2,6 +2,7 @@ package com.eerdem07.mira.gateway.shared.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
@@ -15,11 +16,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApplicationException.class)
     public ProblemDetail handleApplication(ApplicationException ex, HttpServletRequest request) {
+        log.warn("Application exception: [Code: {}, Message: {}]", ex.getCode(), ex.getMessage());
         HttpStatus status = HttpStatus.valueOf(ex.getType()
                 .httpStatus());
         return problem(status, ex.getCode(), ex.getMessage(), request);
@@ -27,9 +30,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DomainException.class)
     public ProblemDetail handleDomain(DomainException ex, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.valueOf(ex.getType()
-                .httpStatus());
+        log.warn("Domain exception: [Code: {}, Message: {}]", ex.getCode(), ex.getMessage());
+        // Clean Architecture gereği domain layer HTTP status bilmemeli, genel olarak 422'ye map edilir.
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
         return problem(status, ex.getCode(), ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(InfrastructureException.class)
+    public ProblemDetail handleInfrastructure(InfrastructureException ex, HttpServletRequest request) {
+        log.error("Infrastructure exception: [Code: {}, Message: {}]", ex.getCode(), ex.getMessage(), ex);
+        return problem(HttpStatus.INTERNAL_SERVER_ERROR, ex.getCode(), "An internal infrastructure error occurred.", request);
     }
 
     /**
@@ -37,6 +47,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        log.warn("Method argument validation failed: {}", ex.getMessage());
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         List<Map<String, Object>> errors = ex.getBindingResult()
@@ -55,6 +66,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ProblemDetail handleConstraintViolation(ConstraintViolationException ex, HttpServletRequest request) {
+        log.warn("Constraint violation: {}", ex.getMessage());
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         List<Map<String, Object>> errors = ex.getConstraintViolations()
@@ -69,10 +81,10 @@ public class GlobalExceptionHandler {
         pd.setProperty("errors", errors);
         return pd;
     }
-
+    
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleUnexpected(Exception ex, HttpServletRequest request) {
-        // Prod ortamında ex.getMessage() / stack trace sızdırma.
+        log.error("Unexpected server error occurred: ", ex);
         return problem(HttpStatus.INTERNAL_SERVER_ERROR, "UNEXPECTED_ERROR", "Unexpected server error.", request);
     }
 
@@ -108,8 +120,22 @@ public class GlobalExceptionHandler {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("field", e.getField());
         m.put("message", e.getDefaultMessage());
-        // rejectedValue bazen hassas olabilir (password vs). İstersen bunu kapatırız.
-        m.put("rejectedValue", e.getRejectedValue());
+
+        // Güvenlik Zafiyeti Çözümü: Hassas verilerin sızdırılmasını engelle
+        Object rejectedValue = e.getRejectedValue();
+        if (isSensitiveField(e.getField())) {
+            rejectedValue = "***";
+        }
+        m.put("rejectedValue", rejectedValue);
+
         return m;
+    }
+
+    private boolean isSensitiveField(String fieldName) {
+        if (fieldName == null) {
+            return false;
+        }
+        String lower = fieldName.toLowerCase();
+        return lower.contains("password") || lower.contains("secret") || lower.contains("token") || lower.contains("credential");
     }
 }

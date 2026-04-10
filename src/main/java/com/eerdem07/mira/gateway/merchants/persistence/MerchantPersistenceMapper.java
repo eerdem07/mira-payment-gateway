@@ -1,7 +1,6 @@
 package com.eerdem07.mira.gateway.merchants.persistence;
 
 import com.eerdem07.mira.gateway.merchants.domain.Merchant;
-import com.eerdem07.mira.gateway.merchants.domain.MerchantStatus;
 
 public final class MerchantPersistenceMapper {
 
@@ -14,7 +13,7 @@ public final class MerchantPersistenceMapper {
                 domain.getEmail(),
                 domain.getPasswordHash(),
                 domain.getLegalName(),
-                toJpaStatus(domain.getStatus()),
+                domain.getStatus(),
                 domain.getCreatedAt(),
                 domain.getActivatedAt()
                         .orElse(null),
@@ -29,19 +28,19 @@ public final class MerchantPersistenceMapper {
                 entity.getEmail(),
                 entity.getPasswordHash(),
                 entity.getLegalName(),
-                toDomainStatus(entity.getStatus()),
+                entity.getStatus(),
                 entity.getCreatedAt(),
                 entity.getActivatedAt(),
                 entity.getSuspendedAt()
         );
     }
 
-    private static MerchantStatusJpa toJpaStatus(MerchantStatus status) {
-        return MerchantStatusJpa.valueOf(status.name());
-    }
-
-    private static MerchantStatus toDomainStatus(MerchantStatusJpa status) {
-        return MerchantStatus.valueOf(status.name());
-    }
+//    private static MerchantStatus toJpaStatus(MerchantStatus status) {
+//        return MerchantStatus.valueOf(status.name());
+//    }
+//
+//    private static MerchantStatus toDomainStatus(MerchantStatus status) {
+//        return MerchantStatus.valueOf(status.name());
+//    }
 }
 

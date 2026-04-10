@@ -1,17 +1,20 @@
 package com.eerdem07.mira.gateway.merchants.domain;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.UUID;
 
+@Getter
 public class ApiCredential {
     private final UUID credentialId;
     private final UUID merchantId;
-    private ApiCredentialEnvironment apiCredentialEnvironment;
     private final String keyId;
     private final String secretHash;
     private final String secretPrefix;
-    private ApiCredentialStatus apiCredentialStatus;
     private final Instant createdAt;
+    private ApiCredentialEnvironment apiCredentialEnvironment;
+    private ApiCredentialStatus apiCredentialStatus;
     private Instant lastUsedAt;
     private Instant revokedAt;
 
@@ -29,10 +32,10 @@ public class ApiCredential {
         this.credentialId = credentialId;
         this.merchantId = merchantId;
         this.apiCredentialEnvironment = apiCredentialEnvironment;
+        this.apiCredentialStatus = apiCredentialStatus;
         this.keyId = keyId;
         this.secretHash = secretHash;
         this.secretPrefix = secretPrefix;
-        this.apiCredentialStatus = apiCredentialStatus;
         this.createdAt = createdAt;
         this.revokedAt = revokedAt;
         this.lastUsedAt = lastUsedAt;
@@ -60,5 +63,18 @@ public class ApiCredential {
                 null,
                 null
         );
+    }
+
+    public static ApiCredential restore(UUID credentialId,
+                                        UUID merchantId,
+                                        ApiCredentialEnvironment environment,
+                                        ApiCredentialStatus apiCredentialStatus,
+                                        String keyId,
+                                        String secretHash,
+                                        String secretPrefix,
+                                        Instant createdAt,
+                                        Instant lastUsedAt,
+                                        Instant revokedAt) {
+        return new ApiCredential(credentialId, merchantId, environment, keyId, secretHash, secretPrefix, apiCredentialStatus, createdAt, lastUsedAt, revokedAt);
     }
 }
