@@ -8,6 +8,7 @@ import com.eerdem07.mira.gateway.auth.application.port.in.LoginUseCase;
 import com.eerdem07.mira.gateway.auth.application.port.out.MerchantAuthPort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ public class LoginService implements LoginUseCase {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public LoginResult execute(LoginCommand request) {
         var merchant = this.merchantAuthPort.findByEmail(request.email())
                 .orElseThrow(InvalidCredentialsException::new);

@@ -4,6 +4,6 @@ import com.eerdem07.mira.gateway.shared.exception.DomainException;
 
 public class MerchantAlreadyActiveException extends DomainException {
     public MerchantAlreadyActiveException() {
-        super("MERCHANT_ALREADY_ACTIVE", "Merchant is alreadt active.");
+        super("MERCHANT_ALREADY_ACTIVE", "Merchant is already active.");
     }
 }

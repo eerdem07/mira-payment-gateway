@@ -8,7 +8,9 @@ import com.eerdem07.mira.gateway.merchants.domain.ApiCredential;
 import com.eerdem07.mira.gateway.merchants.domain.ApiCredentialEnvironment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
@@ -20,11 +22,9 @@ public class GenerateApiKeyService implements GenerateApiKeyUseCase {
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final int KEY_ID_BYTE_LENGTH = 16; // 128-bit
     private static final int SECRET_BYTE_LENGTH = 32; // 256-bit
-    private static final int SECRET_PREFIX_LENGTH = 6; // ilk 6 karakter
 
     private final PasswordEncoder passwordEncoder;
     private final Clock clock;
-
     private final ApiCredentialRepositoryPort apiCredentialRepository;
 
     public GenerateApiKeyService(PasswordEncoder passwordEncoder, Clock clock, ApiCredentialRepositoryPort apiCredentialRepository) {
@@ -33,45 +33,44 @@ public class GenerateApiKeyService implements GenerateApiKeyUseCase {
         this.apiCredentialRepository = apiCredentialRepository;
     }
 
-
+    @Transactional
     @Override
     public GenerateApiKeyResult execute(GenerateApiKeyCommand command) {
         UUID credentialId = UUID.randomUUID();
         UUID merchantId = command.merchantId();
+        ApiCredentialEnvironment env = ApiCredentialEnvironment.LIVE;
 
-        String keyId = generateKeyId();
-        String plainSecret = generateSecret();
+        String randomKeyId = generateRandomBase64(KEY_ID_BYTE_LENGTH);
+        String randomSecret = generateRandomBase64(SECRET_BYTE_LENGTH);
+
+        String keyId = ApiCredential.formatKeyId(env, randomKeyId);
+        String plainSecret = ApiCredential.formatSecret(env, randomSecret);
+
         String secretHash = passwordEncoder.encode(plainSecret);
-        String secretPrefix = plainSecret.substring(0, SECRET_PREFIX_LENGTH);
+        String secretSuffix = ApiCredential.extractSecretSuffix(plainSecret);
         Instant now = Instant.now(clock);
 
         ApiCredential apiCredential = ApiCredential.create(
                 credentialId,
                 merchantId,
-                ApiCredentialEnvironment.LIVE,
+                env,
                 keyId,
                 secretHash,
-                secretPrefix,
+                secretSuffix,
                 now
         );
 
         this.apiCredentialRepository.save(apiCredential);
 
-        return new GenerateApiKeyResult("asd");
+        String basicAuthToken = Base64.getEncoder().encodeToString(
+                (keyId + ":" + plainSecret).getBytes(StandardCharsets.UTF_8)
+        );
+
+        return new GenerateApiKeyResult(keyId, plainSecret, basicAuthToken);
     }
 
-    // PRIVATE HELPER METHODS
-
-    private String generateKeyId() {
-        byte[] bytes = new byte[KEY_ID_BYTE_LENGTH];
-        SECURE_RANDOM.nextBytes(bytes);
-        return Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(bytes);
-    }
-
-    private String generateSecret() {
-        byte[] bytes = new byte[SECRET_BYTE_LENGTH];
+    private String generateRandomBase64(int byteLength) {
+        byte[] bytes = new byte[byteLength];
         SECURE_RANDOM.nextBytes(bytes);
         return Base64.getUrlEncoder()
                 .withoutPadding()

@@ -8,6 +8,10 @@ public final class MerchantPersistenceMapper {
     }
 
     public static MerchantJpaEntity toEntity(Merchant domain) {
+        if (domain == null) {
+            return null;
+        }
+
         return new MerchantJpaEntity(
                 domain.getMerchantId(),
                 domain.getEmail(),
@@ -23,6 +27,10 @@ public final class MerchantPersistenceMapper {
     }
 
     public static Merchant toDomain(MerchantJpaEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
         return Merchant.restore(
                 entity.getMerchantId(),
                 entity.getEmail(),
@@ -34,13 +42,4 @@ public final class MerchantPersistenceMapper {
                 entity.getSuspendedAt()
         );
     }
-
-//    private static MerchantStatus toJpaStatus(MerchantStatus status) {
-//        return MerchantStatus.valueOf(status.name());
-//    }
-//
-//    private static MerchantStatus toDomainStatus(MerchantStatus status) {
-//        return MerchantStatus.valueOf(status.name());
-//    }
 }
-

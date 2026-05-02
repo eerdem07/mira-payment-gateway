@@ -7,30 +7,44 @@ public final class ApiCredentialPersistenceMapper {
     }
 
     public static ApiCredentialJpaEntity toEntity(ApiCredential domain) {
-        return new ApiCredentialJpaEntity(
+        if (domain == null) {
+            return null;
+        }
+
+        ApiCredentialJpaEntity entity = new ApiCredentialJpaEntity(
                 domain.getCredentialId(),
                 domain.getMerchantId(),
                 domain.getKeyId(),
                 domain.getSecretHash(),
-                domain.getSecretPrefix(),
+                domain.getSecretSuffix(),
                 domain.getApiCredentialEnvironment(),
                 domain.getApiCredentialStatus(),
                 domain.getCreatedAt(),
                 domain.getLastUsedAt(),
                 domain.getRevokedAt()
         );
+        entity.setVersion(domain.getVersion());
+        return entity;
     }
 
     public static ApiCredential toDomain(ApiCredentialJpaEntity entity) {
-        return ApiCredential.restore(entity.getCredentialId(),
+        if (entity == null) {
+            return null;
+        }
+
+        ApiCredential domain = ApiCredential.restore(
+                entity.getCredentialId(),
                 entity.getMerchantId(),
                 entity.getEnvironment(),
                 entity.getStatus(),
                 entity.getKeyId(),
                 entity.getSecretHash(),
-                entity.getSecretPrefix(),
+                entity.getSecretSuffix(),
                 entity.getCreatedAt(),
                 entity.getLastUsedAt(),
-                entity.getRevokedAt());
+                entity.getRevokedAt()
+        );
+        domain.setVersion(entity.getVersion());
+        return domain;
     }
 }

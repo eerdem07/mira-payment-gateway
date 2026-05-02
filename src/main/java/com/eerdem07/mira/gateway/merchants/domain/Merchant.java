@@ -1,5 +1,10 @@
 package com.eerdem07.mira.gateway.merchants.domain;
 
+import com.eerdem07.mira.gateway.merchants.domain.exception.InvalidMerchantActivationStateException;
+import com.eerdem07.mira.gateway.merchants.domain.exception.InvalidMerchantSuspensionStateException;
+import com.eerdem07.mira.gateway.merchants.domain.exception.InvalidEmailException;
+import com.eerdem07.mira.gateway.merchants.domain.exception.MerchantCannotActivateException;
+import com.eerdem07.mira.gateway.merchants.domain.exception.MerchantCannotSuspendException;
 import com.eerdem07.mira.gateway.shared.domain.EmailValidator;
 import lombok.Getter;
 
@@ -30,17 +35,17 @@ public class Merchant {
         this.passwordHash = Objects.requireNonNull(password, "passwordHash");
 
         if (this.status == MerchantStatus.ACTIVE && this.activatedAt == null) {
-            throw new IllegalStateException("ACTIVE merchant must be activatedAt");
+            throw new InvalidMerchantActivationStateException();
         }
 
         if (this.status == MerchantStatus.SUSPENDED && this.suspendedAt == null) {
-            throw new IllegalStateException("SUSPENDED merchant must be suspendedAt");
+            throw new InvalidMerchantSuspensionStateException();
         }
     }
 
     public static Merchant register(UUID merchantId, String email, String passwordHash, String legalName, Instant now) {
         if (!EmailValidator.isValid(email)) {
-//            throw new InvalidEmailException("Invalid email format");
+            throw new InvalidEmailException("Invalid email format.");
         }
 
         return new Merchant(merchantId, email.trim()
@@ -61,14 +66,14 @@ public class Merchant {
     }
 
     public void activate(Instant now) {
-        if (!status.canActivate()) throw new IllegalStateException("Only PENDING...");
+        if (!status.canActivate()) throw new MerchantCannotActivateException("Only PENDING merchants can be activated.");
         this.status = MerchantStatus.ACTIVE;
         this.activatedAt = Objects.requireNonNull(now, "now");
         this.suspendedAt = null;
     }
 
     public void suspend(Instant now) {
-        if (!status.canSuspend()) throw new IllegalStateException("...");
+        if (!status.canSuspend()) throw new MerchantCannotSuspendException("Only ACTIVE merchants can be suspended.");
         this.status = MerchantStatus.SUSPENDED;
         this.suspendedAt = Objects.requireNonNull(now, "now");
     }
@@ -84,5 +89,3 @@ public class Merchant {
     }
 
 }
-
-

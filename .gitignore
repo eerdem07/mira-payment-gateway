@@ -1,3 +1,19 @@
-git
+# Local env
 .env
+.env.*
+!.env.example
+
+# AI/local agent notes
 gemini.md
+AGENTS.md
+
+# Build output
+target/
+
+# IDE/editor
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store

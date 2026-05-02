@@ -36,8 +36,8 @@ public class ApiCredentialJpaEntity {
     @Column(name = "secret_hash", nullable = false, updatable = false)
     private String secretHash;
 
-    @Column(name = "secret_prefix")
-    private String secretPrefix;
+    @Column(name = "secret_suffix")
+    private String secretSuffix;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "environment", nullable = false, length = 20)
@@ -63,11 +63,15 @@ public class ApiCredentialJpaEntity {
     @Column(name = "version", nullable = false)
     private Long version;
 
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     public ApiCredentialJpaEntity(UUID credentialId,
                                   UUID merchantId,
                                   String keyId,
                                   String secretHash,
-                                  String secretPrefix,
+                                  String secretSuffix,
                                   ApiCredentialEnvironment environment,
                                   ApiCredentialStatus status,
                                   Instant createdAt,
@@ -77,7 +81,7 @@ public class ApiCredentialJpaEntity {
         this.merchantId = merchantId;
         this.keyId = keyId;
         this.secretHash = secretHash;
-        this.secretPrefix = secretPrefix;
+        this.secretSuffix = secretSuffix;
         this.environment = environment;
         this.status = status;
         this.createdAt = createdAt;

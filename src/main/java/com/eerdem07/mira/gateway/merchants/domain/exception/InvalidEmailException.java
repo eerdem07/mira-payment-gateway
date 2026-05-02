@@ -8,8 +8,3 @@ public class InvalidEmailException extends DomainException {
     }
 }
 
-//public class InvalidEmailException extends IllegalArgumentException {
-//    public InvalidEmailException(String message) {
-//        super(message);
-//    }
-//}
