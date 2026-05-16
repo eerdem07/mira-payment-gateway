@@ -12,5 +12,7 @@ public record SubmitCheckoutSessionResult(
         PaymentIntentStatus paymentIntentStatus,
         String returnUrl,
         String failureCode,
-        String failureMessage
+        String failureMessage,
+        String acsUrl,
+        String threeDsFlow
 ) {}

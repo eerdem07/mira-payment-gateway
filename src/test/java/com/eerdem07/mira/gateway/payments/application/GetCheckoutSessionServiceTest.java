@@ -6,6 +6,7 @@ import com.eerdem07.mira.gateway.payments.application.port.in.GetCheckoutSession
 import com.eerdem07.mira.gateway.payments.application.port.in.GetCheckoutSessionResult;
 import com.eerdem07.mira.gateway.payments.application.port.out.CheckoutSessionRepositoryPort;
 import com.eerdem07.mira.gateway.payments.application.port.out.PaymentIntentRepositoryPort;
+import com.eerdem07.mira.gateway.payments.domain.CaptureMethod;
 import com.eerdem07.mira.gateway.payments.domain.CheckoutSession;
 import com.eerdem07.mira.gateway.payments.domain.PaymentIntent;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,7 @@ class GetCheckoutSessionServiceTest {
         
         PaymentIntent intent = PaymentIntent.create(
                 paymentIntentId, UUID.randomUUID(), BigDecimal.valueOf(100.00), Currency.getInstance("TRY"),
-                "merchant-ref", "Premium plan payment", Instant.now(), Instant.now().plusSeconds(3600)
+                CaptureMethod.AUTOMATIC, "merchant-ref", "Premium plan payment", Instant.now(), Instant.now().plusSeconds(3600)
         );
 
         when(checkoutSessionRepositoryPort.findByToken(token)).thenReturn(Optional.of(session));

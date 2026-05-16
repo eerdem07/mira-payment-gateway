@@ -42,6 +42,7 @@ public class CreateCheckoutSessionService implements CreateCheckoutSessionUseCas
         
         PaymentIntent paymentIntent = paymentIntentRepositoryPort.findById(command.paymentIntentId())
                 .orElseThrow(() -> new PaymentIntentNotFoundException(command.paymentIntentId()));
+        paymentIntent.validateCheckoutSessionCreatable();
 
         UUID sessionId = UUID.randomUUID();
         String token = "cs_test_" + UUID.randomUUID().toString().replace("-", ""); 

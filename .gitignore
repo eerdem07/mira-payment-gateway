@@ -3,9 +3,8 @@
 .env.*
 !.env.example
 
-# AI/local agent notes
-gemini.md
-AGENTS.md
+# AI/local agent notes and configurations
+.agents/
 
 # Build output
 target/

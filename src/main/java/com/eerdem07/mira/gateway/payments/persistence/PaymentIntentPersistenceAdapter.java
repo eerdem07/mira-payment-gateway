@@ -4,6 +4,7 @@ import com.eerdem07.mira.gateway.payments.application.port.out.PaymentIntentRepo
 import com.eerdem07.mira.gateway.payments.domain.PaymentIntent;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,5 +28,18 @@ public class PaymentIntentPersistenceAdapter implements PaymentIntentRepositoryP
     public Optional<PaymentIntent> findById(UUID id) {
         return repository.findById(id)
                 .map(PaymentIntentPersistenceMapper::toDomain);
+    }
+
+    @Override
+    public Optional<PaymentIntent> findByIdAndMerchantId(UUID id, UUID merchantId) {
+        return repository.findByIdAndMerchantId(id, merchantId)
+                .map(PaymentIntentPersistenceMapper::toDomain);
+    }
+
+    @Override
+    public List<PaymentIntent> findAllByMerchantId(UUID merchantId) {
+        return repository.findAllByMerchantId(merchantId).stream()
+                .map(PaymentIntentPersistenceMapper::toDomain)
+                .toList();
     }
 }

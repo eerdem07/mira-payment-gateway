@@ -1,5 +1,6 @@
 package com.eerdem07.mira.gateway.payments.persistence;
 
+import com.eerdem07.mira.gateway.payments.domain.CaptureMethod;
 import com.eerdem07.mira.gateway.payments.domain.PaymentIntentStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -30,6 +31,10 @@ public class PaymentIntentJpaEntity {
     @Column(name = "currency", nullable = false, length = 3)
     private Currency currency;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "capture_method", nullable = false, length = 20)
+    private CaptureMethod captureMethod;
+
     @Column(name = "merchant_reference")
     private String merchantReference;
 
@@ -52,6 +57,12 @@ public class PaymentIntentJpaEntity {
     @Column(name = "expires_at")
     private Instant expiresAt;
 
+    @Column(name = "authorization_expires_at")
+    private Instant authorizationExpiresAt;
+
+    @Column(name = "authorized_payment_attempt_id")
+    private UUID authorizedPaymentAttemptId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -69,6 +80,7 @@ public class PaymentIntentJpaEntity {
             UUID merchantId,
             BigDecimal amount,
             Currency currency,
+            CaptureMethod captureMethod,
             String merchantReference,
             String description,
             PaymentIntentStatus status,
@@ -76,6 +88,8 @@ public class PaymentIntentJpaEntity {
             String failureCode,
             String failureMessage,
             Instant expiresAt,
+            Instant authorizationExpiresAt,
+            UUID authorizedPaymentAttemptId,
             Instant createdAt,
             Instant updatedAt,
             Instant succeededAt,
@@ -85,6 +99,7 @@ public class PaymentIntentJpaEntity {
         this.merchantId = merchantId;
         this.amount = amount;
         this.currency = currency;
+        this.captureMethod = captureMethod;
         this.merchantReference = merchantReference;
         this.description = description;
         this.status = status;
@@ -92,6 +107,8 @@ public class PaymentIntentJpaEntity {
         this.failureCode = failureCode;
         this.failureMessage = failureMessage;
         this.expiresAt = expiresAt;
+        this.authorizationExpiresAt = authorizationExpiresAt;
+        this.authorizedPaymentAttemptId = authorizedPaymentAttemptId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.succeededAt = succeededAt;

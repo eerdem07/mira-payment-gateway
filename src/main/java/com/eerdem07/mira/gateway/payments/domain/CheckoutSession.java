@@ -96,9 +96,17 @@ public class CheckoutSession {
         }
     }
 
-    public void submit(Instant now) {
+    public void markActionRequired(Instant now) {
         Objects.requireNonNull(now, "now must not be null");
         validateOpenAt(now);
+
+        this.status = CheckoutSessionStatus.ACTION_REQUIRED;
+        this.updatedAt = now;
+    }
+
+    public void submit(Instant now) {
+        Objects.requireNonNull(now, "now must not be null");
+        validateSubmittableAt(now);
         
         this.status = CheckoutSessionStatus.SUBMITTED;
         this.submittedAt = now;
@@ -112,7 +120,7 @@ public class CheckoutSession {
             return;
         }
 
-        if (this.status != CheckoutSessionStatus.OPEN) {
+        if (!isCancellable()) {
             throw new CheckoutSessionCannotBeCanceledException(this.status);
         }
 
@@ -123,8 +131,8 @@ public class CheckoutSession {
 
     public void expire(Instant now) {
         Objects.requireNonNull(now, "now must not be null");
-        if (this.status != CheckoutSessionStatus.OPEN) {
-            throw new CheckoutSessionNotOpenException("Only open checkout sessions can be expired.");
+        if (!isExpirable()) {
+            throw new CheckoutSessionNotOpenException("Only open or action-required checkout sessions can be expired.");
         }
         if (!isExpiredAt(now)) {
             throw new CheckoutSessionNotYetExpiredException("Cannot expire session before its expiration time.");
@@ -132,6 +140,25 @@ public class CheckoutSession {
         
         this.status = CheckoutSessionStatus.EXPIRED;
         this.updatedAt = now;
+    }
+
+    public boolean isCancellable() {
+        return this.status == CheckoutSessionStatus.OPEN
+                || this.status == CheckoutSessionStatus.ACTION_REQUIRED;
+    }
+
+    public boolean isExpirable() {
+        return this.status == CheckoutSessionStatus.OPEN
+                || this.status == CheckoutSessionStatus.ACTION_REQUIRED;
+    }
+
+    private void validateSubmittableAt(Instant now) {
+        if (this.status != CheckoutSessionStatus.OPEN && this.status != CheckoutSessionStatus.ACTION_REQUIRED) {
+            throw new CheckoutSessionNotOpenException("Checkout session cannot be submitted. Current status: " + this.status);
+        }
+        if (isExpiredAt(now)) {
+            throw new CheckoutSessionExpiredException("Checkout session has expired.");
+        }
     }
 
     private static void validateAbsoluteUrl(String url, String fieldName) {

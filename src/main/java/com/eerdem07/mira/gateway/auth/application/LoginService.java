@@ -38,7 +38,6 @@ public class LoginService implements LoginUseCase {
 
         String accessToken = jwtTokenProvider.generateToken(new GenerateAccessTokenCommand(merchantId));
 
-        System.out.println(accessToken);
         return new LoginResult(accessToken);
     }
 

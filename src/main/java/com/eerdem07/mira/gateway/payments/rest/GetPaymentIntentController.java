@@ -30,6 +30,7 @@ public class GetPaymentIntentController {
                 result.status(),
                 result.amount(),
                 result.currency(),
+                result.captureMethod(),
                 result.merchantReference(),
                 result.description(),
                 result.expiresAt(),

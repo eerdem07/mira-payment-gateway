@@ -5,10 +5,13 @@ import java.util.UUID;
 
 public record PaymentAuthorizationRequest(
         UUID paymentIntentId,
+        UUID paymentAttemptId,
         UUID merchantId,
         BigDecimal amount,
         String currency,
-        String merchantReference,
+        String orderId,
+        int installmentCount,
+        boolean capture,
         String cardNumber,
         String expiryMonth,
         String expiryYear,

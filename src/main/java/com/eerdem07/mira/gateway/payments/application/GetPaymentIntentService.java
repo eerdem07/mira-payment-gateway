@@ -27,6 +27,7 @@ public class GetPaymentIntentService implements GetPaymentIntentUseCase {
                 paymentIntent.getStatus().name(),
                 paymentIntent.getAmount(),
                 paymentIntent.getCurrency().getCurrencyCode(),
+                paymentIntent.getCaptureMethod(),
                 paymentIntent.getMerchantReference(),
                 paymentIntent.getDescription(),
                 paymentIntent.getExpiresAt(),

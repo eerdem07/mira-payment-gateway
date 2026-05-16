@@ -31,12 +31,20 @@ public class CreatePaymentIntentController {
             @Valid @RequestBody CreatePaymentIntentRequest request){
         
         UUID merchantId = UUID.fromString(merchantIdString);
-        var result = this.createPaymentIntentUseCase.execute(new CreatePaymentIntentCommand(merchantId, request.amount(), request.currency(), request.merchantReference(), request.description()));
+        var result = this.createPaymentIntentUseCase.execute(new CreatePaymentIntentCommand(
+                merchantId,
+                request.amount(),
+                request.currency(),
+                request.captureMethod(),
+                request.merchantReference(),
+                request.description()
+        ));
         CreatePaymentIntentResponse response = new CreatePaymentIntentResponse(
                 result.id(),
                 result.status(),
                 result.amount(),
                 result.currency(),
+                result.captureMethod(),
                 result.merchantReference(),
                 result.description(),
                 result.expiresAt(),

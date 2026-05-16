@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/checkout-sessions/{token}/cancel")
+@RequestMapping("/v1/checkout-sessions")
 public class CancelCheckoutSessionController {
 
     private final CancelCheckoutSessionUseCase cancelCheckoutSessionUseCase;
@@ -18,7 +18,7 @@ public class CancelCheckoutSessionController {
         this.cancelCheckoutSessionUseCase = cancelCheckoutSessionUseCase;
     }
 
-    @PostMapping
+    @PostMapping("/{token}/cancel")
     public ResponseEntity<Void> cancelCheckoutSession(@PathVariable String token) {
         var command = new CancelCheckoutSessionCommand(token);
         cancelCheckoutSessionUseCase.execute(command);

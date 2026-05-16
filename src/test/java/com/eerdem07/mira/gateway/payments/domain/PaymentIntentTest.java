@@ -66,8 +66,8 @@ class PaymentIntentTest {
     }
 
     @Test
-    void shouldCancelRequiresConfirmationSessionAndSetDates() {
-        PaymentIntent intent = createPaymentIntentWithStatus(PaymentIntentStatus.REQUIRES_CONFIRMATION);
+    void shouldCancelRequiresActionSessionAndSetDates() {
+        PaymentIntent intent = createPaymentIntentWithStatus(PaymentIntentStatus.REQUIRES_ACTION);
         Instant now = Instant.now();
 
         intent.cancel(now);

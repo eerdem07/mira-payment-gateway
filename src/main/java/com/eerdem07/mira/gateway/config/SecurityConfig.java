@@ -27,7 +27,7 @@ import java.util.Base64;
 public class SecurityConfig {
 
     @Bean
-    @Order(1)
+    @Order(2)
     SecurityFilterChain apiKeySecurityFilterChain(HttpSecurity http, com.eerdem07.mira.gateway.auth.application.ApiKeyAuthenticationService apiKeyAuthenticationService) throws Exception {
         ApiKeyAuthenticationFilter apiKeyFilter = new ApiKeyAuthenticationFilter(apiKeyAuthenticationService);
         return http
@@ -42,7 +42,21 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(2)
+    @Order(1)
+    SecurityFilterChain checkoutSessionSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/v1/checkout-sessions", "/v1/checkout-sessions/**")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
+                )
+                .build();
+    }
+
+    @Bean
+    @Order(3)
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -51,7 +65,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v1/auth/login").permitAll()
                         .requestMatchers("/v1/merchants").permitAll()
-                        .requestMatchers("/v1/checkout-sessions/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {

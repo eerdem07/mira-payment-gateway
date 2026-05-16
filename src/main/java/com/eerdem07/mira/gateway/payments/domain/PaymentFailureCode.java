@@ -1,0 +1,17 @@
+package com.eerdem07.mira.gateway.payments.domain;
+
+public enum PaymentFailureCode {
+    DO_NOT_HONOR,
+    INVALID_CARD_NUMBER,
+    INSUFFICIENT_FUNDS,
+    EXPIRED_CARD,
+    LOST_OR_STOLEN_CARD,
+    TRANSACTION_NOT_PERMITTED,
+    LIMIT_EXCEEDED,
+    POS_FORMAT_ERROR,
+    POS_CONFIGURATION_ERROR,
+    ISSUER_UNAVAILABLE,
+    POS_SYSTEM_ERROR,
+    POS_TIMEOUT,
+    UNKNOWN_POS_ERROR
+}

@@ -46,7 +46,9 @@ public class SubmitCheckoutSessionController {
                 result.paymentIntentStatus(),
                 result.returnUrl(),
                 result.failureCode(),
-                result.failureMessage()
+                result.failureMessage(),
+                result.acsUrl(),
+                result.threeDsFlow()
         );
 
         return ResponseEntity.ok(response);

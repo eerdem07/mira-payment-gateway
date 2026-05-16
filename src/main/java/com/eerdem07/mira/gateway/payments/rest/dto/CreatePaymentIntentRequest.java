@@ -1,5 +1,6 @@
 package com.eerdem07.mira.gateway.payments.rest.dto;
 
+import com.eerdem07.mira.gateway.payments.domain.CaptureMethod;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +16,9 @@ public record CreatePaymentIntentRequest(
         @NotBlank(message = "Currency is required")
         @Size(min = 3, max = 3, message = "Currency must be a valid 3-letter ISO 4217 code (e.g., USD, EUR)")
         String currency,
+
+        @NotNull(message = "Capture method is required")
+        CaptureMethod captureMethod,
 
         @NotBlank(message = "Merchant reference is required")
         @Size(max = 255, message = "Merchant reference must not exceed 255 characters")
@@ -50,11 +54,6 @@ public record CreatePaymentIntentRequest(
  *   Ödemeyi yapan müşterinin merchant sistemindeki id bilgisidir.
  * - campaignCode:
  *   Ödemede kullanılan kampanya/indirim kodudur.
-
-
- * CaptureMethod captureMethod
- * - AUTOMATIC: ödeme başarılı olursa tutar doğrudan tahsil edilir.
- * - MANUAL: önce provizyon alınır, merchant daha sonra capture işlemi yapar.
 
  * Long expiresInSeconds
  * - PaymentIntent'in kaç saniye geçerli olacağını belirtir.
